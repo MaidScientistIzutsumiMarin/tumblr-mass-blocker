@@ -1,2 +1,3 @@
 # tumblr-mass-blocker
-A small GUI app that lets you mass blog from Tumblr posts.
+
+A small GUI application that lets you mass block users from Tumblr posts.
