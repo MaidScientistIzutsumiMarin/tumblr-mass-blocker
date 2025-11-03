@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A small GUI application that lets you mass block users from Tumblr posts."
 readme = "README.md"
 requires-python = ">= 3.14"
-dependencies = ["nicegui", "niquests[http3,speedups]", "pywebview"]
+dependencies = ["Authlib", "httpx", "nicegui", "pywebview"]
 
 [project.urls]
 Funding = "https://ko-fi.com/maidscientistizutsumimarin"
