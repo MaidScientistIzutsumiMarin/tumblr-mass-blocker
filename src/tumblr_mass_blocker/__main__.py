@@ -14,11 +14,6 @@ class Root:
     session: ClassVar = TumblrSession()
     enabled = True
 
-    @classmethod
-    async def shutdown(cls) -> None:
-        app.shutdown()
-        await cls.session.aclose()
-
     async def setup(self) -> None:
         with ui_input("Post URL", validation=self.session.verify_post_url).classes("w-full").props("clearable").bind_enabled_from(self) as url_input:
             button(on_click=lambda: self.render_post.refresh(url_input.value), icon="send")
@@ -28,7 +23,7 @@ class Root:
 
         with row(align_items="center").classes("w-full"):
             space()
-            button("Quit", on_click=self.shutdown).bind_enabled_from(self)
+            button("Quit", on_click=app.shutdown).bind_enabled_from(self)
 
     @refreshable_method
     async def render_post(self, url: str) -> None:
@@ -42,6 +37,8 @@ class Root:
 
 
 def main() -> None:
+    app.on_shutdown(Root.session.aclose)  # pyright: ignore[reportUnknownMemberType]
+
     ui_run(
         Root().setup,
         title="Tumblr Mass Blocker",
