@@ -1,25 +1,15 @@
-from functools import partial
-from operator import is_
-from typing import ClassVar
-
 from httpx import HTTPStatusError
 from nicegui import app
 from nicegui.ui import button, card, expansion, html, label, refreshable_method, row, run, space  # pyright: ignore[reportUnknownVariableType]
 
-from tumblr_mass_blocker.helpers import BindableInput
-from tumblr_mass_blocker.models import Post
+from tumblr_mass_blocker.helpers import ButtonInput
+from tumblr_mass_blocker.models import Post, Tokens
 from tumblr_mass_blocker.tumblr import TumblrSession
 
 
 class Root:
-    session: ClassVar = TumblrSession()
-
     async def setup(self) -> None:
-        with row(wrap=False, align_items="center").classes("w-full"):
-            url_input = BindableInput("Post URL", validation=Post.validate_url).classes("w-full").props("clearable").on("keydown.enter", lambda: process_url_button.enabled and process_url_button.run_method("click"))
-            process_url_button = button(on_click=lambda: self.render_post.refresh(url_input.value), icon="send").bind_enabled_from(url_input, "_error", backward=partial(is_, None))
-
-            url_input.error = ""
+        ButtonInput("Post URL", Post.validate_url, self.render_post.refresh, "search")
 
         with expansion("Post Preview").classes("w-full"), card().classes("w-full"):
             await self.render_post("")
@@ -28,10 +18,16 @@ class Root:
             space()
             button("Quit", on_click=app.shutdown)
 
+        self.session = None
+
     @refreshable_method
     async def render_post(self, url: str) -> None:
         if not url:
             return
+
+        if self.session is None:
+            tokens = await Tokens.load()
+            self.session = TumblrSession(tokens)
 
         try:
             post = await self.session.retrieve_published_post(url)
@@ -45,10 +41,10 @@ class Root:
 
 
 def main() -> None:
-    app.on_shutdown(Root.session.aclose)  # pyright: ignore[reportUnknownMemberType]
-
+    root = Root()
+    app.on_shutdown(lambda: root.session is not None and root.session.aclose())  # pyright: ignore[reportUnknownMemberType]
     run(
-        Root().setup,
+        root.setup,
         title="Tumblr Mass Blocker",
         dark=None,
         native=True,

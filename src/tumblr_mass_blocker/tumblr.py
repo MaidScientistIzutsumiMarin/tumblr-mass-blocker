@@ -1,12 +1,14 @@
+from dataclasses import asdict
+
 from authlib.integrations.httpx_client import AsyncOAuth1Client
 
-from tumblr_mass_blocker.models import Post, ResponseModel
+from tumblr_mass_blocker.models import Post, ResponseModel, Tokens
 
 
 class TumblrSession(AsyncOAuth1Client):
-    def __init__(self) -> None:
+    def __init__(self, tokens: Tokens) -> None:
         super().__init__(
-            "",  # TODO: Read in tokens
+            **asdict(tokens),
             base_url="https://api.tumblr.com/v2/blog",
         )
 
