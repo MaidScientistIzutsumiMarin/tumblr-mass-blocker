@@ -1,8 +1,8 @@
-import httpx
 from authlib.oauth1 import SIGNATURE_HMAC_SHA1, SIGNATURE_TYPE_HEADER
 from authlib.oauth1.client import OAuth1Client
+from requests import Session
 
-class AsyncOAuth1Client(OAuth1Client, httpx.AsyncClient):  # pyright: ignore[reportIncompatibleMethodOverride]
+class OAuth1Session(OAuth1Client, Session):
     def __init__(
         self,
         client_id: str,
@@ -17,3 +17,24 @@ class AsyncOAuth1Client(OAuth1Client, httpx.AsyncClient):  # pyright: ignore[rep
         force_include_body: bool = False,
         **kwargs: object,
     ) -> None: ...
+    def fetch_request_token(
+        self,
+        url: str,
+        **kwargs: object,
+    ) -> dict[str, str]: ...
+    def create_authorization_url(
+        self,
+        url: str,
+        request_token: str | None = None,
+        **kwargs: object,
+    ) -> str: ...
+    def parse_authorization_response(
+        self,
+        url: str,
+    ) -> dict[str, str]: ...
+    def fetch_access_token(
+        self,
+        url: str,
+        verifier: str | None = None,
+        **kwargs: object,
+    ) -> dict[str, str]: ...
