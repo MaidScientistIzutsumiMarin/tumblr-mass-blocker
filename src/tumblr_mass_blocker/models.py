@@ -47,7 +47,7 @@ class Tokens:
             with dialog().props("persistent").on("hide", lambda: cls.oauth_dialog.clear()) as cls.oauth_dialog, card().classes("w-full"):
                 ui_input("OAuth consumer key:", password=True, password_toggle_button=True).classes("w-full").bind_value(self, "client_id")
                 ui_input("OAuth consumer secret:", password=True, password_toggle_button=True).classes("w-full").bind_value(self, "client_secret")
-                button("Submit tokens", on_click=self.submit_tokens, icon="lock").bind_enabled_from(self, "client_id", lambda client_id: client_id and self.client_secret).bind_enabled_from(self, "client_secret", lambda client_id: client_id and self.client_secret)
+                button("Submit tokens", on_click=self.submit_tokens, icon="lock").bind_enabled_from(self, "client_id", lambda client_id: client_id and self.client_secret).bind_enabled_from(self, "client_secret", lambda client_secret: client_secret and self.client_id)
 
                 cls.oauth_dialog.open()
 
