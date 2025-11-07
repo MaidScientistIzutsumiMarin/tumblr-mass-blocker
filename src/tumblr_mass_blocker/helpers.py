@@ -3,6 +3,7 @@ from operator import is_
 from typing import TYPE_CHECKING
 
 from nicegui.binding import BindableProperty
+from nicegui.functions import clipboard
 from nicegui.ui import button, row
 from nicegui.ui import input as ui_input
 
@@ -26,6 +27,7 @@ class ButtonInput(ui_input):
             super().__init__(label, validation=self.try_validation)
 
             self.classes("w-full").props("clearable").on("keydown.enter", lambda: submit_button.enabled and submit_button.run_method("click"))
+            button(on_click=self.paste_clipboard, icon="content_paste")
             submit_button = button(on_click=lambda: on_click(self.value), icon=icon).bind_enabled_from(self, "_error", partial(is_, None))
 
         self.error = ""
@@ -38,3 +40,7 @@ class ButtonInput(ui_input):
                 return msg
         except Exception:  # noqa: BLE001
             return msg
+
+    async def paste_clipboard(self) -> None:
+        value = await clipboard.read()
+        self.set_value(value)
