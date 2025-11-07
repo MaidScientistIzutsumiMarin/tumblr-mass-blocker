@@ -47,7 +47,7 @@ class Tokens:
             with dialog().props("persistent").on("hide", lambda: cls.oauth_dialog.clear()) as cls.oauth_dialog, card().classes("w-full"):
                 ui_input("OAuth consumer key:", password=True, password_toggle_button=True).classes("w-full").bind_value(self, "client_id")
                 ui_input("OAuth consumer secret:", password=True, password_toggle_button=True).classes("w-full").bind_value(self, "client_secret")
-                button("Submit tokens", on_click=self.submit_tokens, icon="lock").bind_enabled_from(self, "client_id", lambda client_id: client_id and self.client_secret).bind_enabled_from(self, "client_secret", lambda client_secret: client_secret and self.client_id)
+                button("Submit tokens", on_click=self.submit_tokens, icon="key").bind_enabled_from(self, "client_id", lambda client_id: client_id and self.client_secret).bind_enabled_from(self, "client_secret", lambda client_secret: client_secret and self.client_id)
 
                 cls.oauth_dialog.open()
 
@@ -65,10 +65,11 @@ class Tokens:
         separator()
         label("Press the button below to open a browser window and authorize this application.")
         button("Authorize application", on_click=partial(webbrowser_open, authorization_url), icon="open_in_browser")
+        label("After authorizing, copy and paste the URL of the page you are redirected to below.")
         ButtonInput(
             "Full Redirected URL",
             self.submit_authorization_response,
-            "lock",
+            "login",
             lambda url: "oauth_verifier" not in session.parse_authorization_response(url),
         )
 
