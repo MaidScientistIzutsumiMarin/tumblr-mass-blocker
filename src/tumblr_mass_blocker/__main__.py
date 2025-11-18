@@ -3,6 +3,7 @@ from typing import ClassVar
 from httpx import HTTPStatusError
 from nicegui import app
 from nicegui.ui import card, expansion, html, label, refreshable_method, row, run  # pyright: ignore[reportUnknownVariableType]
+from winloop import new_event_loop
 
 from tumblr_mass_blocker.helpers import ButtonInput
 from tumblr_mass_blocker.models import Post, Tokens
@@ -58,4 +59,5 @@ def main() -> None:
         dark=None,
         native=True,
         reload=False,
+        loop=new_event_loop,
     )
