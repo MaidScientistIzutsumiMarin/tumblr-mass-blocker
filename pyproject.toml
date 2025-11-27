@@ -1,17 +1,17 @@
 [project]
 name = "tumblr-mass-blocker"
-version = "0.1.0"
 description = "A small GUI application that lets you mass block users from Tumblr posts."
 readme = "README.md"
 requires-python = ">= 3.14"
 dependencies = [
   "Authlib",
-  "httpx",
+  "httpx[brotli,http2,zstd]",
   "nicegui",
+  "pythonnet @ git+https://github.com/pythonnet/pythonnet@python3.14",
   "pywebview",
-  "requests",
   "winloop"
 ]
+dynamic = ["version"]
 
 [project.urls]
 Funding = "https://ko-fi.com/maidscientistizutsumimarin"
@@ -19,6 +19,9 @@ Source = "https://github.com/MaidScientistIzutsumiMarin/tumblr-mass-blocker"
 
 [project.scripts]
 tumblr-mass-blocker = "tumblr_mass_blocker.__main__:main"
+
+[project.optional-dependencies]
+dev = ["pyinstaller"]
 
 [build-system]
 requires = ["flit_core"]

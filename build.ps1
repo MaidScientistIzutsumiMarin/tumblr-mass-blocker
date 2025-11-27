@@ -1,1 +1,4 @@
-..\..\Powershell\build.ps1 -ExtraArgs '--collect-all nicegui' -Install 'git+https://github.com/pythonnet/pythonnet@python3.14'
+pyinstaller.exe `
+    --noconfirm `
+    --name tumblr-mass-blocker `
+    src\tumblr_mass_blocker\__main__.py
