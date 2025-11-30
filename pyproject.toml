@@ -1,16 +1,9 @@
 [project]
 name = "tumblr-mass-blocker"
-description = "A small GUI application that lets you mass block users from Tumblr posts."
+description = "A small console application that lets you mass block users from Tumblr posts."
 readme = "README.md"
 requires-python = ">= 3.14"
-dependencies = [
-  "Authlib",
-  "httpx[brotli,http2,zstd]",
-  "nicegui",
-  "pythonnet @ git+https://github.com/pythonnet/pythonnet@python3.14",
-  "pywebview",
-  "winloop"
-]
+dependencies = ["Authlib", "httpx[brotli,http2,zstd]", "pydantic", "rich"]
 dynamic = ["version"]
 
 [project.urls]

@@ -1,6 +1,6 @@
 from authlib.oauth1 import SIGNATURE_HMAC_SHA1, SIGNATURE_TYPE_HEADER, ClientAuth
-from authlib.oauth1.client import OAuth1Client
-from httpx import AsyncClient, Auth
+from authlib.oauth1.client import OAuth1Client as _OAuth1Client
+from httpx import Auth, Client
 
 class OAuth1Auth(Auth, ClientAuth):
     def __init__(
@@ -18,7 +18,7 @@ class OAuth1Auth(Auth, ClientAuth):
         force_include_body: bool = False,
     ) -> None: ...
 
-class AsyncOAuth1Client(OAuth1Client, AsyncClient):  # pyright: ignore[reportIncompatibleMethodOverride]
+class OAuth1Client(_OAuth1Client, Client):  # pyright: ignore[reportIncompatibleMethodOverride]
     def __init__(
         self,
         client_id: str,
@@ -33,12 +33,12 @@ class AsyncOAuth1Client(OAuth1Client, AsyncClient):  # pyright: ignore[reportInc
         force_include_body: bool = False,
         **kwargs: object,
     ) -> None: ...
-    async def fetch_request_token(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def fetch_request_token(
         self,
         url: str,
         **kwargs: object,
     ) -> dict[str, str]: ...
-    async def fetch_access_token(
+    def fetch_access_token(
         self,
         url: str,
         verifier: str | None = None,

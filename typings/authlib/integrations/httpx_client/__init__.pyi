@@ -1,6 +1,6 @@
-from oauth1_client import AsyncOAuth1Client, OAuth1Auth
+from oauth1_client import OAuth1Auth, OAuth1Client
 
 __all__ = [
-    "AsyncOAuth1Client",
     "OAuth1Auth",
+    "OAuth1Client",
 ]
