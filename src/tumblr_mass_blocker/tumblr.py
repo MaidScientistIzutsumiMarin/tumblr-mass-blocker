@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Literal
 from authlib.integrations.httpx_client import OAuth1Auth
 from httpx import Client, Response
 
-from tumblr_mass_blocker.models import Note, NoteResponse, Post, PostResponse, ResponseModel, Tokens
+from tumblr_mass_blocker.models import DEFAULT_INT, Note, NoteResponse, Post, PostResponse, ResponseModel, Tokens
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -54,9 +54,7 @@ class TumblrClient(Client):
 
     def get_all_notes(self, post: Post, mode: ModeType) -> Generator[Note]:
         before_timestamp = None
-        while True:
+        while before_timestamp != DEFAULT_INT:
             response = self.get_notes(post, before_timestamp, mode)
-            yield from response.notes
-            if response.links is None:
-                break
             before_timestamp = response.links.next.query_params.before_timestamp
+            yield from response.notes

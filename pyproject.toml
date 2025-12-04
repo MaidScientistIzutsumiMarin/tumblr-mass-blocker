@@ -3,7 +3,13 @@ name = "tumblr-mass-blocker"
 description = "A small console application that lets you mass block users from Tumblr posts."
 readme = "README.md"
 requires-python = ">= 3.14"
-dependencies = ["Authlib", "httpx[brotli,http2,zstd]", "pydantic", "rich"]
+dependencies = [
+  "Authlib",
+  "httpx[brotli,http2,zstd]",
+  "pydantic",
+  "rich",
+  "rich-menu"
+]
 dynamic = ["version"]
 
 [project.urls]

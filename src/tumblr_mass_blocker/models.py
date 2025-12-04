@@ -13,6 +13,8 @@ from rich.panel import Panel
 
 from tumblr_mass_blocker import __version__
 
+DEFAULT_INT = -1
+
 
 @dataclass
 class Tokens:
@@ -84,17 +86,17 @@ class NoteResponse(FullyValidatedModel):
     class Links(FullyValidatedModel):
         class Next(FullyValidatedModel):
             class QueryParams(FullyValidatedModel):
-                before_timestamp: int
+                before_timestamp: int = DEFAULT_INT
 
-            query_params: QueryParams
+            query_params: QueryParams = QueryParams()
 
-        next: Next
+        next: Next = Next()
 
     notes: list[Note]
     total_notes: int
-    total_likes: int = -1
-    total_reblogs: int = -1
-    links: Links | None = Field(validation_alias="_links")
+    total_likes: int = DEFAULT_INT
+    total_reblogs: int = DEFAULT_INT
+    links: Links = Field(default_factory=Links, validation_alias="_links")
 
 
 class Post(FullyValidatedModel):
@@ -128,7 +130,10 @@ class Post(FullyValidatedModel):
 
 
 class Note(FullyValidatedModel):
+    model_config = ConfigDict(frozen=True)
+
     blog_name: str
     blog_url: str
-    post_id: str = ""
-    avatar_url: dict[int, str]
+
+    def __rich__(self) -> str:
+        return f"[link={self.blog_url}]{self.blog_name}[/link]"
