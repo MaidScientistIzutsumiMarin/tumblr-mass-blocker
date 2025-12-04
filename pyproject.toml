@@ -7,8 +7,8 @@ dependencies = [
   "Authlib",
   "httpx[brotli,http2,zstd]",
   "pydantic",
-  "rich",
-  "rich-menu"
+  "questionary",
+  "rich"
 ]
 dynamic = ["version"]
 

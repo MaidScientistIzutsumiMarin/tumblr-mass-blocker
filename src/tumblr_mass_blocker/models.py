@@ -1,17 +1,19 @@
 from dataclasses import asdict, dataclass
-from getpass import getpass
 from json import dumps, loads
 from pathlib import Path
-from typing import ClassVar, Self
+from typing import TYPE_CHECKING, ClassVar, Self
 from urllib.parse import urlsplit
 
 from authlib.integrations.httpx_client import OAuth1Client
 from pydantic import BaseModel, ConfigDict, Field
+from questionary import password
 from rich import print as rich_print
-from rich.console import Console
 from rich.panel import Panel
 
 from tumblr_mass_blocker import __version__
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 DEFAULT_INT = -1
 
@@ -19,11 +21,20 @@ DEFAULT_INT = -1
 @dataclass
 class Tokens:
     path: ClassVar = Path("tokens.json")
-    initialized = False
     client_id: str = ""
     client_secret: str = ""
     token: str = ""
     token_secret: str = ""
+
+    @staticmethod
+    def online_token_prompt(url: str, *tokens: str) -> Generator[str]:
+        formatted_token_string = " and ".join(f"[cyan]{token}[/]" for token in tokens)
+
+        rich_print(f"Retrieve your {formatted_token_string} from: {url}")
+        for token in tokens:
+            yield password(f"Enter your {token} (masked):").ask()
+
+        rich_print()
 
     def __post_init__(self) -> None:
         if self.path.exists():
@@ -32,9 +43,8 @@ class Tokens:
 
         if not all(asdict(self).values()):
             if not self.client_id or not self.client_secret:
-                rich_print("https://tumblr.com/oauth/apps")
-                self.client_id = getpass("Enter Consumer Key: ", echo_char="*")
-                self.client_secret = getpass("Enter Consumer Secret: ", echo_char="*")
+                self.client_id, self.client_secret = self.online_token_prompt("https://tumblr.com/oauth/apps", "consumer key", "consumer secret")
+                self.save()
 
             with OAuth1Client(
                 self.client_id,
@@ -46,22 +56,19 @@ class Tokens:
                 client.fetch_request_token("request_token")
 
                 authorization_url = client.create_authorization_url("https://tumblr.com/oauth/authorize")
-                rich_print("Click the link below to open a browser window, and authorize this application.")
-                rich_print("After authorizing, copy and paste the URL of the page you are redirected to below.")
-                rich_print(authorization_url)
-                authorization_response = Console().input("Authorization Response: ")
+                rich_print("Open the link below in your browser, and authorize this application.\nAfter authorizing, copy and paste the URL of the page you are redirected to below.")
+                (authorization_response,) = self.online_token_prompt(authorization_url, "full redirect URL")
                 client.parse_authorization_response(authorization_response)
 
                 token = client.fetch_access_token("access_token")
-                self.token = token["oauth_token"]
-                self.token_secret = token["oauth_token_secret"]
 
-        self.initialized = True
+            self.token = token["oauth_token"]
+            self.token_secret = token["oauth_token_secret"]
 
-    def __setattr__(self, name: str, value: object) -> None:
-        super().__setattr__(name, value)
-        if self.initialized:
-            self.path.write_text(dumps(asdict(self)))
+            self.save()
+
+    def save(self) -> None:
+        self.path.write_text(dumps(asdict(self)))
 
 
 class FullyValidatedModel(BaseModel):

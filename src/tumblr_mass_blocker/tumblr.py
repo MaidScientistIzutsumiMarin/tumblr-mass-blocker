@@ -7,7 +7,7 @@ from httpx import Client, Response
 from tumblr_mass_blocker.models import DEFAULT_INT, Note, NoteResponse, Post, PostResponse, ResponseModel, Tokens
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import Generator, Iterable
 
 type ModeType = Literal["all", "likes", "conversation", "rollup", "rollup_with_tags"]
 
@@ -21,7 +21,7 @@ class TumblrClient(Client):
             base_url="https://api.tumblr.com/v2/blog",
         )
 
-    def block_a_list_of_blogs(self, blog_identifier: str, blocked_tumblelogs: list[str]) -> None:
+    def block_a_list_of_blogs(self, blog_identifier: str, blocked_tumblelogs: Iterable[str]) -> None:
         self.post(
             f"{blog_identifier}/blocks/bulk",
             data={
