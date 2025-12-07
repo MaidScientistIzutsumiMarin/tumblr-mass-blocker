@@ -7,10 +7,10 @@ from urllib.parse import urlsplit
 from authlib.integrations.httpx_client import OAuth1Client
 from pydantic import BaseModel, ConfigDict, Field
 from questionary import password
-from rich import print as rich_print
 from rich.panel import Panel
 
 from tumblr_mass_blocker import __version__
+from tumblr_mass_blocker.console import console
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -30,11 +30,11 @@ class Tokens:
     def online_token_prompt(url: str, *tokens: str) -> Generator[str]:
         formatted_token_string = " and ".join(f"[cyan]{token}[/]" for token in tokens)
 
-        rich_print(f"Retrieve your {formatted_token_string} from: {url}")
+        console.print(f"Retrieve your {formatted_token_string} from: {url}")
         for token in tokens:
             yield password(f"Enter your {token} (masked):").ask()
 
-        rich_print()
+        console.print()
 
     def __post_init__(self) -> None:
         if self.path.exists():
@@ -53,10 +53,10 @@ class Tokens:
                 http2=True,
                 base_url="https://www.tumblr.com/oauth",
             ) as client:
-                client.fetch_request_token("request_token")
+                client.fetch_request_token("request_token")  # pyright: ignore[reportUnknownMemberType]
 
                 authorization_url = client.create_authorization_url("https://tumblr.com/oauth/authorize")
-                rich_print("Open the link below in your browser, and authorize this application.\nAfter authorizing, copy and paste the URL of the page you are redirected to below.")
+                console.print("Open the link below in your browser, and authorize this application.\nAfter authorizing, copy and paste the URL of the page you are redirected to below.")
                 (authorization_response,) = self.online_token_prompt(authorization_url, "full redirect URL")
                 client.parse_authorization_response(authorization_response)
 

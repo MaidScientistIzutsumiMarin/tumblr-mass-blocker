@@ -9,7 +9,7 @@ from tumblr_mass_blocker.models import DEFAULT_INT, Note, NoteResponse, Post, Po
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable
 
-type ModeType = Literal["all", "likes", "conversation", "rollup", "rollup_with_tags"]
+type NotesMode = Literal["all", "likes", "conversation", "rollup", "rollup_with_tags"]
 
 
 class TumblrClient(Client):
@@ -41,7 +41,7 @@ class TumblrClient(Client):
         )
         return ResponseModel[PostResponse].model_validate_json(response.text).response.posts[0]
 
-    def get_notes(self, post: Post, before_timestamp: int | None, mode: ModeType) -> NoteResponse:
+    def get_notes(self, post: Post, before_timestamp: int | None, mode: NotesMode) -> NoteResponse:
         response = self.get(
             f"{post.blog_name}/notes",
             params={
@@ -52,7 +52,7 @@ class TumblrClient(Client):
         )
         return ResponseModel[NoteResponse].model_validate_json(response.text).response
 
-    def get_all_notes(self, post: Post, mode: ModeType) -> Generator[Note]:
+    def get_all_notes(self, post: Post, mode: NotesMode) -> Generator[Note]:
         before_timestamp = None
         while before_timestamp != DEFAULT_INT:
             response = self.get_notes(post, before_timestamp, mode)
