@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Literal
 
-from authlib.integrations.httpx_client import OAuth1Auth
+from authlib.integrations.httpx_client.oauth1_client import OAuth1Auth
 from httpx import Client, Response
 
 from tumblr_mass_blocker.models import DEFAULT_INT, Note, NoteResponse, Post, PostResponse, ResponseModel, Tokens
