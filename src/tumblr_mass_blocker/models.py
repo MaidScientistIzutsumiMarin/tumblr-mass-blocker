@@ -1,10 +1,11 @@
 from dataclasses import asdict, dataclass
+from functools import total_ordering
 from json import dumps, loads
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Self
 from urllib.parse import urlsplit
 
-from authlib.integrations.httpx_client import OAuth1Client
+from authlib.integrations.httpx_client.oauth1_client import OAuth1Client
 from pydantic import BaseModel, ConfigDict, Field
 from questionary import password
 from rich.panel import Panel
@@ -101,8 +102,6 @@ class NoteResponse(FullyValidatedModel):
 
     notes: list[Note]
     total_notes: int
-    total_likes: int = DEFAULT_INT
-    total_reblogs: int = DEFAULT_INT
     links: Links = Field(default_factory=Links, validation_alias="_links")
 
 
@@ -136,11 +135,15 @@ class Post(FullyValidatedModel):
         )
 
 
+@total_ordering
 class Note(FullyValidatedModel):
     model_config = ConfigDict(frozen=True)
 
     blog_name: str
     blog_url: str
 
+    def __lt__(self, other: Note) -> bool:
+        return self.blog_name < other.blog_name
+
     def __rich__(self) -> str:
-        return f"[link={self.blog_url}]{self.blog_name}[/link]"
+        return f"[cyan link={self.blog_url}]{self.blog_name}"
