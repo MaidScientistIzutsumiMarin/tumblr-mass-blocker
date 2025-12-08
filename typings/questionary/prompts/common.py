@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from collections.abc import Callable  # noqa: INP001
 from typing import Any
 
 FormattedText = str | list[tuple[str, str]] | list[tuple[str, str, Callable[[Any], None]]] | None

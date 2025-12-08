@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING  # noqa: INP001
 
 from questionary.constants import DEFAULT_QUESTION_PREFIX, DEFAULT_SELECTED_POINTER
 
@@ -6,7 +6,6 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from prompt_toolkit.styles import Style
-
     from questionary.prompts.common import Choice
     from questionary.question import Question
 

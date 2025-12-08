@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING  # noqa: INP001
 
 from questionary.constants import DEFAULT_QUESTION_PREFIX
 

@@ -1,4 +1,4 @@
-from questionary.constants import DEFAULT_KBI_MESSAGE
+from questionary.constants import DEFAULT_KBI_MESSAGE  # noqa: INP001
 
 
 class Question[T]:
