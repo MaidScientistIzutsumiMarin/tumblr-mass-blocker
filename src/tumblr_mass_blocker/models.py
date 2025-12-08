@@ -33,7 +33,7 @@ class Tokens:
 
         console.print(f"Retrieve your {formatted_token_string} from: {url}")
         for token in tokens:
-            yield password(f"Enter your {token} (masked):").ask()
+            yield password(f"Enter your {token} (masked):", validate=bool).ask()
 
         console.print()
 
